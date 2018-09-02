@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+FMPS_with_DT_EST.csv
+LUR_dep.csv
+LUR_ind_input.csv
+arcgis_zonal
+buffer_multiply.xlsx
+data
+how_ufp_calculated.csv
+join_old_new.R
+mix
+provat_lat_lon.csv
