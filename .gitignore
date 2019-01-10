@@ -12,3 +12,4 @@ how_ufp_calculated.csv
 join_old_new.R
 mix
 provat_lat_lon.csv
+*.csv
