@@ -40,9 +40,9 @@ GPS_with_pn_idling <- GPS_with_pn %>% filter(Speed < 2)
 leaflet(data = GPS_with_pn_idling[1000:2000, ]) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = ~as.character(Speed)) # not super useful
 
 
-# target 1 in schenley park to downtown
+# target 1 in schenley park to downtown----
 target1 <- GPS_with_pn[0:3000, ]
-t_plot1 <- ggplot(target1) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5) + scale_y_continuous(limits = c(0, 100000)) + labs(y = 'Total PN (#/cm3)')
+t_plot1 <- ggplot(target1) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5) + scale_y_continuous(limits = c(0, 100000)) + labs(y = 'Total PN (#/cm3)', title = '01/11/19')  
 t_plot2 <- ggplot(target1) + geom_point(aes(DateTime, y = Speed), alpha = 0.5) + labs(y = 'Speed (m/s)')
 cowplot::plot_grid(t_plot1, t_plot2, align = 'v', nrow = 2)
 ggsave('idling stationary bias/CMU-downtown Speed PN time series.pdf')
@@ -57,4 +57,25 @@ t_map1 <- leaflet(data = target1) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popu
 library(htmlwidgets)
 saveWidget(t_map1, file="CMU-downtown.html")
 
+
+# target 2 ------
+# now choose points fall into the schenley park
+schenley_park <- GPS_with_pn %>% filter(Lat > 40.430522, Lat < 40.437881, Lon < -79.932090, Lon > -79.947961) %>% mutate(Date = lubridate::date(DateTime))
+
+t_plot1 <- ggplot(schenley_park) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5)  + labs(y = 'Total PN (#/cm3)') + facet_wrap(~Date, scales = 'free')
+t_plot2 <- ggplot(target2) + geom_point(aes(DateTime, y = Speed), alpha = 0.5) + labs(y = 'Speed (m/s)')+ facet_wrap(~Date)
+cowplot::plot_grid(t_plot1, t_plot2, align = 'v', nrow = 2)
+# ggsave('idling stationary bias/CMU-downtown Speed PN time series.pdf')
+
+# target 1 
+
+t_map1 <- leaflet(data = target2) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = paste("DateTime: ", target2$DateTime, "<br>", 
+                                                                                          "Speed: ", target2$Speed, "<br>",
+                                                                                          'PN: ', target2$Total_PN))
+
+t_map1
+
+# save to widget 
+library(htmlwidgets)
+# saveWidget(t_map1, file="CMU-downtown.html")
 
