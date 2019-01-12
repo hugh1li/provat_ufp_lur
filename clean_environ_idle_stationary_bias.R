@@ -42,8 +42,8 @@ leaflet(data = GPS_with_pn_idling[1000:2000, ]) %>% addTiles() %>% addMarkers(~L
 
 # target 1 in schenley park to downtown----
 target1 <- GPS_with_pn[0:3000, ]
-t_plot1 <- ggplot(target1) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5) + scale_y_continuous(limits = c(0, 100000)) + labs(y = 'Total PN (#/cm3)', title = '01/11/19')  
-t_plot2 <- ggplot(target1) + geom_point(aes(DateTime, y = Speed), alpha = 0.5) + labs(y = 'Speed (m/s)')
+t_plot1 <- ggplot(target1) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.1) + scale_y_continuous(limits = c(0, 75000)) + labs(y = 'Total PN (#/cm3)', title = '01/11/18')  
+t_plot2 <- ggplot(target1) + geom_point(aes(DateTime, y = Speed), alpha = 0.1) + labs(y = 'Speed (m/s)')
 cowplot::plot_grid(t_plot1, t_plot2, align = 'v', nrow = 2)
 ggsave('idling stationary bias/CMU-downtown Speed PN time series.pdf')
 
@@ -58,24 +58,41 @@ library(htmlwidgets)
 saveWidget(t_map1, file="CMU-downtown.html")
 
 
-# target 2 ------
+# all schenley park data ------
 # now choose points fall into the schenley park
 schenley_park <- GPS_with_pn %>% filter(Lat > 40.430522, Lat < 40.437881, Lon < -79.932090, Lon > -79.947961) %>% mutate(Date = lubridate::date(DateTime))
 
-t_plot1 <- ggplot(schenley_park) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5)  + labs(y = 'Total PN (#/cm3)') + facet_wrap(~Date, scales = 'free')
-t_plot2 <- ggplot(target2) + geom_point(aes(DateTime, y = Speed), alpha = 0.5) + labs(y = 'Speed (m/s)')+ facet_wrap(~Date)
+write_csv(schenley_park, 'idling stationary bias/schenley_park.csv')
+
+# what are the days?
+unique(schenley_park$Date)
+
+# target 2 ----
+t_plot1 <- schenley_park %>% filter(as.character(Date) == '2018-01-17') %>% ggplot() + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5)  + labs(y = 'Total PN (#/cm3)')  + scale_y_continuous(limits = c(0, 60000))
+t_plot2 <- schenley_park %>% filter(as.character(Date) == '2018-01-17') %>% ggplot() + geom_point(aes(DateTime, y = Speed), alpha = 0.5) + labs(y = 'Speed (m/s)')
+
 cowplot::plot_grid(t_plot1, t_plot2, align = 'v', nrow = 2)
 # ggsave('idling stationary bias/CMU-downtown Speed PN time series.pdf')
 
 # target 1 
-
-t_map1 <- leaflet(data = target2) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = paste("DateTime: ", target2$DateTime, "<br>", 
-                                                                                          "Speed: ", target2$Speed, "<br>",
-                                                                                          'PN: ', target2$Total_PN))
+target <- schenley_park %>% filter(as.character(Date) == '2018-01-17')
+t_map1 <-  leaflet(data = target) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = paste("DateTime: ", target$DateTime, "<br>", 
+                                                                                          "Speed: ", target$Speed, "<br>",
+                                                                                          'PN: ', target$Total_PN))
 
 t_map1
 
 # save to widget 
 library(htmlwidgets)
 # saveWidget(t_map1, file="CMU-downtown.html")
+
+
+# my all schenley data ----------------------------------------------------
+
+all_schenley <-  leaflet(data = schenley_park) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = paste("DateTime: ", schenley_park$DateTime, "<br>", 
+                                                                                          "Speed: ", schenley_park$Speed, "<br>",
+                                                                                          'PN: ', schenley_park$Total_PN))
+
+saveWidget(all_schenley, file="Schenley_park.html")
+
 
