@@ -27,27 +27,27 @@ summary(sent_provat)
 
 # mapping clean environment -----------------------------------------------
 # first get FMPS
-FMPS_bias_check <- read_rds("data/refined_data/Final_FMPS_winter_ellis.rds")
+FMPS_bias_check <- read_rds("data/refined_data/Final_FMPS_winter_ellis_dn.rds")
 # then GPS
 GPS <- read_rds('data/refined_data/WinterGPS_EllisOnly.rds')
 
 # join them
 
-GPS_with_pn <- GPS %>% inner_join(FMPS_bias_check) %>% mutate(Total_PN = rowSums(.[8:37])/16) %>% select(-c(F6.04:F856.8)) # not my total_pn here does not consider 1st two columns
+GPS_with_pn <- GPS %>% inner_join(FMPS_bias_check) %>% mutate(Total_PN = rowSums(.[8:37])) %>% select(-c(F6.04:F856.8)) # not my total_pn here does not consider 1st two columns
 
 GPS_with_pn_idling <- GPS_with_pn %>% filter(Speed < 2)
   
 leaflet(data = GPS_with_pn_idling[1000:2000, ]) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = ~as.character(Speed)) # not super useful
 
 
-# target 1 in schenley park
+# target 1 in schenley park to downtown
 target1 <- GPS_with_pn[0:3000, ]
-t_plot1 <- ggplot(target1) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5) + scale_y_continuous(limits = c(0, 7000)) + labs(y = 'Total PN (#/cm3)')
+t_plot1 <- ggplot(target1) + geom_point( aes(x = DateTime, y = Total_PN), alpha = 0.5) + scale_y_continuous(limits = c(0, 100000)) + labs(y = 'Total PN (#/cm3)')
 t_plot2 <- ggplot(target1) + geom_point(aes(DateTime, y = Speed), alpha = 0.5) + labs(y = 'Speed (m/s)')
 cowplot::plot_grid(t_plot1, t_plot2, align = 'v', nrow = 2)
-ggsave('CMU-downtown Speed PN time series.pdf')
+ggsave('idling stationary bias/CMU-downtown Speed PN time series.pdf')
 
-# target 1
+# target 1 
 
 t_map1 <- leaflet(data = target1) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popup = paste("DateTime: ", target1$DateTime, "<br>", 
                               "Speed: ", target1$Speed, "<br>",
@@ -56,3 +56,5 @@ t_map1 <- leaflet(data = target1) %>% addTiles() %>% addMarkers(~Lon, ~Lat, popu
 # save to widget 
 library(htmlwidgets)
 saveWidget(t_map1, file="CMU-downtown.html")
+
+
