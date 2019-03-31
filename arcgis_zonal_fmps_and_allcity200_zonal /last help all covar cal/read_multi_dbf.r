@@ -11,12 +11,12 @@ readDBF <- function(file){
 }
 
 
-fileID1 <- list.files(path =  "covar extraction/full-ace_covar77/",pattern="*\\.dbf$")
-file.names1 <- paste0("covar extraction/full-ace_covar77/", fileID1)
+fileID1 <- list.files(path =  "arcgis_zonal_fmps_and_allcity200_zonal /last help all covar cal/city_all_200 all/",pattern="*\\.dbf$")
+file.names1 <- paste0("arcgis_zonal_fmps_and_allcity200_zonal /last help all covar cal/city_all_200 all/", fileID1)
 
 #luagri100 no data, error
-file.names2 <- file.names1[!file.names1 %in% c('covar extraction/full-ace_covar77/LUAGRI100.dbf', "covar extraction/full-ace_covar77/LUAGRI300.dbf")]
-combinedData <- file.names2 %>% map_dfr(readDBF) %>% dplyr::rename(ID = ID) %>% mutate(fileName = tools::file_path_sans_ext(basename(fileName)))
+file.names2 <- file.names1[!file.names1 %in% c('arcgis_zonal_fmps_and_allcity200_zonal /last help all covar cal/city_all_200 all/LUAGRI100.dbf', "arcgis_zonal_fmps_and_allcity200_zonal /last help all covar cal/city_all_200 all/LUAGRI300.dbf")]
+combinedData <- file.names2 %>% map_dfr(readDBF) %>% dplyr::rename(ID = PageNumber) %>% mutate(fileName = tools::file_path_sans_ext(basename(fileName)))
 
 Data_cleaned <- combinedData %>% select(ID, MEAN, fileName) %>% tidyr::spread(key = fileName, value = MEAN)
 
@@ -29,7 +29,7 @@ temp1 <- temp %>% gather()
 Data_cleaned[is.na(Data_cleaned)] <- 25
 
 # 2. multiple the buffer areas
-buffer_multiply <- readxl::read_excel("covar extraction/buffer_multiply_noluagr100-300.xlsx") # remove the luagri100 and luagri300.
+buffer_multiply <- readxl::read_excel("arcgis_zonal_fmps_and_allcity200_zonal /last help all covar cal/buffer_multiply_noluagr100-300.xlsx") # remove the luagri100 and luagri300.
 
 buffer <- buffer_multiply$buffer_adj
 # 265 the last ind column. 
@@ -47,4 +47,7 @@ Allo_Dist_As = EucAllo_As * EucDistinv_As, Allo_Dist2_As = EucAllo_As * EucDisti
 # add ID back
 df <- bind_cols(Data_cleaned[1] ,indf)
 
-write_csv(df, "Porvat77_more_sites_LUR_input.csv")
+# just get the PM
+df1 <- df %>% select(ID, contains('PM'), PointDe_NEI_1000, PointDe_NEI_10000, PointDe_NEI_1500, PointDe_NEI_15000, PointDe_NEI_20000, PointDe_NEI_3000, PointDe_NEI_30000, PointDe_NEI_5000, PointDe_NEI_7500)
+
+write_csv(df1, "ProvatPM_pointde.csv")
