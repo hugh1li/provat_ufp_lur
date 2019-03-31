@@ -26,7 +26,7 @@ env.workspace = r"E:\GIS 12_06_15 backup\CAPS_covariates_important_huge\Point_so
 
 # Select the shapefile containing the polygons to use as boundaries
 # for zonal statistics
-watershedFeat = "E:\GIS 12_06_15 backup\Raster GIS\qing_200m_cells_proj_id.shp"
+watershedFeat = r"E:\GIS 12_06_15 backup\Raster GIS\qing_200m_cells_proj_id.shp"
 
 # watershedFeat = r"C:\Users\hugh\Desktop\GISProject_NoSpace\ACE_1km_shp\ACE_polygon_noZ.shp"
 

@@ -1,1 +1,6 @@
 Only several FMPS polygons
+
+city_all_200 does not have all GIS covariates. Like allocation PM
+
+Provat_lur_200m: might be the 5m buffers around several cells
+

@@ -13,8 +13,8 @@ readDBF <- function(file){
 }
 
 
-fileID1 <- list.files(path =  "data/provat_his_covar0920_based_on_qing/city_all_200/", pattern="*\\.dbf$")
-file.names1 <- paste0("data/provat_his_covar0920_based_on_qing/city_all_200/", fileID1)
+fileID1 <- list.files(path =  "arcgis_zonal_fmps_and_allcity200_zonal /city_all_200/", pattern="*\\.dbf$")
+file.names1 <- paste0("arcgis_zonal_fmps_and_allcity200_zonal /city_all_200/", fileID1)
 
 combinedData1 <- file.names1 %>% map_dfr(readDBF) %>% dplyr::rename(ID = PageNumber) %>% mutate(fileName = tools::file_path_sans_ext(basename(fileName)))
 
@@ -49,5 +49,8 @@ indf <- ind %>% mutate(DISTINVALL = 1/DISTALL, DISTINVMAJ = 1/DISTMAJ, DISTINVAL
 
 
 write_rds(indf, 'data/city_all_200_covar.rds')
+
+
+# create ind with point density -------------------------------------------
 
 
